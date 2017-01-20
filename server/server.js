@@ -1,16 +1,17 @@
-var http = require('http');
-var express = require('express');
-var path = require('path');
-var sep = path.sep;
-var publicPath = path.join(`${__dirname}${sep}..${sep}public`);
-var app = express();
-var socketIO = require('socket.io');
+const http = require('http');
+const express = require('express');
+const path = require('path');
+const sep = path.sep;
+const publicPath = path.join(`${__dirname}${sep}..${sep}public`);
+const app = express();
+const socketIO = require('socket.io');
 var {generateMessage}=require('./utils/message');
 
-var port = process.env.PORT || 3000;
+const port = process.env.PORT || 3000;
 
-var server = http.createServer(app);
-var io = socketIO(server);
+
+const server = http.createServer(app);
+const io = socketIO(server);
 io.on('connection', function (socket) {
     console.log('new user connected');
 
@@ -19,18 +20,18 @@ io.on('connection', function (socket) {
     socket.broadcast.emit('newMessage', generateMessage("Admin", "new user joined"));
 
 
-    socket.on('createMessage', function (message) {
+    socket.on('createMessage', function (message, callbback) {
         console.log(" :", "message=", message);
 
 
-        socket.broadcast.emit('newMessage', generateMessage(message.from, message.text));
+        socket.emit('newMessage', generateMessage(message.from, message.text));
 
 
         socket.on('disconnect', function (socket) {
             console.log("disconnected");
         });
 
-
+        callbback('this is from the server');
     });
 });
 

@@ -8,6 +8,8 @@ describe("generateMessage", function () {
         var from = "alex";
         var text = "hello";
 
+
+
         message = generateMessage(from, text);
 
 
