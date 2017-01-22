@@ -5,7 +5,8 @@ const sep = path.sep;
 const publicPath = path.join(`${__dirname}${sep}..${sep}public`);
 const app = express();
 const socketIO = require('socket.io');
-var {generateMessage}=require('./utils/message');
+var {generateMessage,generateLocationMessage}=require('./utils/message');
+
 
 const port = process.env.PORT || 3000;
 
@@ -23,24 +24,33 @@ io.on('connection', function (socket) {
     socket.on('createMessage', function (message, callbback) {
         console.log(" :", "message=", message);
 
-
         socket.emit('newMessage', generateMessage(message.from, message.text));
 
 
-        socket.on('disconnect', function (socket) {
-            console.log("disconnected");
-        });
-
         callbback('this is from the server');
     });
+
+
+    socket.on('disconnect', function (socket) {
+        console.log("disconnected");
+    });
+
+
+    socket.on("crateLocationMessage", function (message) {
+
+        socket.emit("newLocationMessage", generateLocationMessage("admin", message.lat, message.lng));
+
+
+    });
 });
+
 
 app.use(express.static(publicPath));
 
 
 server.listen(port, function () {
     console.log("Server is on port", port);
-})
+});
 
 
 
